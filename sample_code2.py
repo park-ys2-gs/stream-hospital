@@ -19,11 +19,11 @@ df = load_data("hospital_info.csv")
 
 st.title('병원정보서비스')
 
-t_input = st.text_input(label="병원명 바로 검색", key="a")
+t_input = st.text_input(label="병원명 바로 검색", key="a")  # session state key = 'a'
 
 search_df = df.query('병원이름.str.contains("{}")'.format(t_input))  ## df.query(조건식 문자열)
 if t_input:
-    st.write('검색된 데이터 전체 {}건 (최대10건만 출력됨)'.format(len(search_df)))
+    st.write('검색된 데이터 전체 {}건 (전국 기준. 최대10건만 출력됨)'.format(len(search_df)))
     st.table(search_df.head(10))
     st.button("clear text input", on_click=clear_text)
 
@@ -46,14 +46,30 @@ if select_multi_sido:  # 시도 선택된 "상태"
         emdong_df = sggu_df[sggu_df['읍면동명'].isin(select_multi_emdong)]  # 선택된 읍면동 df
 
         if select_multi_emdong:  # 읍면동 선택된 "상태"
-            st.write('선택된 데이터 전체 {}건 (최대10건만 출력됨)'.format(len(emdong_df)))
-            st.table(emdong_df)  # 선택된 읍면동 df 출력
+            if st.session_state["a"] == "":
+                st.write('선택된 데이터 전체 {}건 (시도/시군구/읍면동 조건 기준. 최대10건만 출력됨)'.format(len(emdong_df)))
+                st.table(emdong_df)  # 선택된 읍면동 df 출력
+            else:
+                emdong_df2 = emdong_df.query('병원이름.str.contains("{}")'.format(t_input))
+                st.write('선택된 데이터 전체 {}건 (시도/시군구/읍면동 조건 기준. 최대10건만 출력됨)'.format(len(emdong_df2)))
+                st.table(emdong_df2)  # 선택된 읍면동+병원명조건 df 출력
         else:  # 읍면동 선택 안 된 "상태" -> 선택된 시군구 df 출력
-            st.write('선택된 데이터 전체 {}건 (최대10건만 출력됨)'.format(len(sggu_df)))
-            st.table(sggu_df)
+            if st.session_state["a"] == "":
+                st.write('선택된 데이터 전체 {}건 (시도/시군구/읍면동 조건 기준. 최대10건만 출력됨)'.format(len(sggu_df)))
+                st.table(sggu_df)
+            else:
+                sggu_df2 = sggu_df.query('병원이름.str.contains("{}")'.format(t_input))
+                st.write('선택된 데이터 전체 {}건 (시도/시군구/읍면동 조건 기준. 최대10건만 출력됨)'.format(len(sggu_df2)))
+                st.table(sggu_df2)  # 선택된 시군구+병원명조건 df 출력
     else:  # 시군구 선택 안 된 "상태" -> 선택된 시도 df 출력
-        st.write('선택된 데이터 전체 {}건 (최대10건만 출력됨)'.format(len(sido_df)))
-        st.table(sido_df)
+        if st.session_state["a"] == "":
+            st.write('선택된 데이터 전체 {}건 (시도/시군구/읍면동 조건 기준. 최대10건만 출력됨)'.format(len(sido_df)))
+            st.table(sido_df)
+        else:
+            sido_df2 = sido_df.query('병원이름.str.contains("{}")'.format(t_input))
+            st.write('선택된 데이터 전체 {}건 (시도/시군구/읍면동 조건 기준. 최대10건만 출력됨)'.format(len(sido_df2)))
+            st.table(sido_df2)  # 선택된 시도+병원명조건 df 출력
 else:  # 시도 선택 안 된 "상태" -> 전체 df 출력
-    st.write('데이터 전체 {}건 (최대10건만 출력됨)'.format(len(df)))
-    st.table(df.head(10))
+    if st.session_state["a"] == "":
+        st.write('데이터 전체 {}건 (최대10건만 출력됨)'.format(len(df)))
+        st.table(df.head(10))
