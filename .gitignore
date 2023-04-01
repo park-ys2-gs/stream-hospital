@@ -1,0 +1,13 @@
+*.csv
+*.txt
+*.xml
+*.log
+
+# IntelliJ project files
+.idea
+.idea/*.xml
+*.iml
+out
+gen
+build
+rebel.xml
