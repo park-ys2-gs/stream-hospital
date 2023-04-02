@@ -12,10 +12,6 @@ def load_data(file_name):
     return data
 
 
-def clear_text():
-    st.session_state["a"] = ""
-
-
 def file_download(df, file_tag, key=None):
     convert_csv = df.to_csv().encode('cp949')
     st.download_button(
@@ -26,18 +22,14 @@ def file_download(df, file_tag, key=None):
         key=key)
 
 
-st.set_page_config(layout="wide", initial_sidebar_state="auto", page_title="Hospital Info Service", page_icon="🔍")
+st.set_page_config(layout="wide", initial_sidebar_state="auto", page_title="Hospital Info Service", page_icon="🏥")
 
 st.title('병원 정보 서비스🏥')
 
 all_df = load_data("hospital_info.csv")
 
-t_input = st.text_input(label="병원명 검색🖱️", key="a")  # session state key = 'a'
+t_input = st.text_input(label="병원명 검색️", key="a")  # session state key = 'a'
 search_df = all_df.query('병원이름.str.contains("{}")'.format(t_input))  ## df.query(조건식 문자열)
-if t_input:
-    st.write('전국 데이터 중 "{}"(으)로 검색된 데이터: 총 {}건 (최대 10건만 출력)'.format(t_input, len(search_df)))
-    st.table(search_df.head(10))
-    st.button("검색어 지우기", on_click=clear_text)
 
 # 사이드바에 select box를 활용하여 조건을 선택한 다음 그에 해당하는 행만 추출하여 데이터프레임을 만들고자합니다.
 st.sidebar.title('지역 선택📍')
@@ -70,7 +62,7 @@ if select_multi_sido:  # 시도 선택된 "상태"
         else:  # 읍면동 선택 안 된 "상태" -> 선택된 시군구 df 출력
             if st.session_state["a"] == "":
                 st.write('사이드바 조건으로 선택된 데이터: 총 {}건 (최대 10건만 출력됨)'.format(len(sggu_df)))
-                st.table(sggu_df.head(10))
+                st.table(sggu_df.head(10))  # 선택된 시군구 df 출력
                 file_download(df=sggu_df, file_tag=None)
             else:
                 sggu_df2 = sggu_df.query('병원이름.str.contains("{}")'.format(t_input))
@@ -80,7 +72,7 @@ if select_multi_sido:  # 시도 선택된 "상태"
     else:  # 시군구 선택 안 된 "상태" -> 선택된 시도 df 출력
         if st.session_state["a"] == "":
             st.write('사이드바 조건으로 선택된 데이터: 총 {}건 (최대 10건만 출력됨)'.format(len(sido_df)))
-            st.table(sido_df.head(10))
+            st.table(sido_df.head(10))  # 선택된 시도 df 출력
             file_download(df=sido_df, file_tag=None)
         else:
             sido_df2 = sido_df.query('병원이름.str.contains("{}")'.format(t_input))
@@ -91,3 +83,7 @@ else:  # 시도 선택 안 된 "상태" -> 전체 df 출력
     if st.session_state["a"] == "":
         st.write('전국 데이터: 총 {}건 (최대 10건만 출력됨)'.format(len(all_df)))
         st.table(all_df.head(10))
+    else:
+        st.write('전국 데이터 중 "{}"(으)로 검색된 데이터: 총 {}건 (최대 10건만 출력)'.format(t_input, len(search_df)))
+        st.table(search_df.head(10))
+        file_download(df=search_df, file_tag=t_input)
