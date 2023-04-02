@@ -22,9 +22,9 @@ def file_download(df, file_tag, key=None):
         key=key)
 
 
-st.set_page_config(layout="wide", initial_sidebar_state="auto", page_title="Hospital Info Service", page_icon="🏥")
+st.set_page_config(layout="wide", initial_sidebar_state="auto", page_title="Hospital Info Search Service", page_icon="🏥")
 
-st.title('병원 정보 서비스🏥')
+st.title('병원 정보 검색 서비스🏥')
 
 all_df = load_data("hospital_info.csv")
 
