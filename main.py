@@ -19,12 +19,11 @@ def file_download(df, file_tag, key=None):
 
 
 st.set_page_config(layout="wide", initial_sidebar_state="auto", page_title="Hospital Info Search Service", page_icon="🏥")
-
 st.title('병원 정보 검색 서비스🏥')
 
 all_df = load_data("hospital_info.csv")
-
-t_input = st.text_input(label="병원명 검색️", key="a")  # session state key = 'a'
+all_df.sort_values(by=['개업일자'], axis=0)
+t_input = st.text_input(label="병원명 검색", key="a")  # session state key = 'a'
 search_df = all_df.query('병원이름.str.contains("{}")'.format(t_input))  ## df.query(조건식 문자열)
 
 # 사이드바에 select box를 활용하여 조건을 선택한 다음 그에 해당하는 행만 추출하여 데이터프레임을 만들고자합니다.
