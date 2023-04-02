@@ -22,10 +22,8 @@ st.set_page_config(layout="wide", initial_sidebar_state="auto", page_title="Hosp
 st.title('병원 정보 검색 서비스🏥')
 
 all_df = load_data("hospital_info.csv")
-
-tab1, tab2 = st.tabs(["📈 Chart", "🗃 Data"])
-
-t_input = st.text_input(label="병원명 검색️", key="a")  # session state key = 'a'
+all_df.sort_values(by=['개업일자'], axis=0)
+t_input = st.text_input(label="병원명 검색", key="a")  # session state key = 'a'
 search_df = all_df.query('병원이름.str.contains("{}")'.format(t_input))  ## df.query(조건식 문자열)
 
 # 사이드바에 select box를 활용하여 조건을 선택한 다음 그에 해당하는 행만 추출하여 데이터프레임을 만들고자합니다.
@@ -33,7 +31,7 @@ st.sidebar.title('지역 선택📍')
 
 # 여러개 선택할 수 있을 때는 multiselect를 이용하실 수 있습니다. (return : list)
 clcd_list = all_df['급2'].unique().tolist()
-select_multi_clcd = st.sidebar.multiselect('확인하고자 하는 clcd를 선택해 주세요. 복수선택가능. (필수X)', clcd_list)
+select_multi_clcd = st.sidebar.multiselect('확인하고자 하는 clcd를 선택해 주세요. 복수선택가능', clcd_list, default=['의원'])
 sido_list = all_df['시도'].unique().tolist()
 select_multi_sido = st.sidebar.multiselect('확인하고자 하는 시도를 선택해 주세요. 복수선택가능', sido_list)
 sido_df = all_df[all_df['시도'].isin(select_multi_sido)]  # 선택된 시도
@@ -88,8 +86,7 @@ if select_multi_sido:  # 시도 선택된 "상태"
             st.write('사이드바 조건 중 "{}"(으)로 검색된 데이터: 총 {}건 (최대 10건만 출력됨)'.format(t_input, len(sido_df2)))
             st.table(sido_df2.head(10))  # 선택된 시도+병원명조건 df 출력
             file_download(df=sido_df2, file_tag=t_input)
-
-else:
+else:  # 시도 선택 안 된 "상태" -> 전체 df 출력
     if st.session_state["a"] == "":
         st.write('전국 데이터: 총 {}건 (최대 10건만 출력됨)'.format(len(all_df)))
         st.table(all_df.head(10))
@@ -97,4 +94,3 @@ else:
         st.write('전국 데이터 중 "{}"(으)로 검색된 데이터: 총 {}건 (최대 10건만 출력)'.format(t_input, len(search_df)))
         st.table(search_df.head(10))
         file_download(df=search_df, file_tag=t_input)
-        st.write("요약 정보")
