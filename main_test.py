@@ -28,11 +28,18 @@ table_colum_names = ['seq', 'ykiho', 'yadmNm', 'clCd', 'clCdNm', 'sidoCd', 'sido
 'mdeptResdntCnt', 'mdeptSdrCnt', 'detyGdrCnt', 'detyIntnCnt', 'detyResdntCnt', 'detySdrCnt', 'cmdcGdrCnt',
 'cmdcIntnCnt', 'cmdcResdntCnt', 'cmdcSdrCnt', 'pnursCnt', 'XPos', 'YPos', 'distance']
 all_df = pd.DataFrame(rows, columns=table_colum_names)
-all_df = all_df.sort_values(by=['estbDd'], ascending=False, axis=0)
-all_df = all_df[['yadmNm', 'clCdNm', 'sidoCdNm', 'sgguCdNm',
-'emdongNm', 'postNo', 'addr', 'telno', 'hospUrl', 'estbDd', 'drTotCnt', 'mdeptGdrCnt', 'mdeptIntnCnt',
-'mdeptResdntCnt', 'mdeptSdrCnt', 'detyGdrCnt', 'detyIntnCnt', 'detyResdntCnt', 'detySdrCnt', 'cmdcGdrCnt',
-'cmdcIntnCnt', 'cmdcResdntCnt', 'cmdcSdrCnt', 'pnursCnt']]
+rename_dict = {'ykiho':'암호화된 요양기호', 'yadmNm':'병원명', 'clCd':'종별코드', 'clCdNm':'종별코드명', 'sidoCd':'시도코드',
+               'sidoCdNm':'시도명', 'sgguCd':'시군구코드', 'sgguCdNm':'시군구명', 'emdongNm':'읍면동명', 'postNo':'우편번호',
+               'addr':'주소', 'telno':'전화번호', 'hospUrl':'홈페이지', 'estbDd':'개설일자', 'drTotCnt':'의사총수', 'mdeptGdrCnt':'의과일반의 인원수',
+               'mdeptIntnCnt':'의과인턴 인원수', 'mdeptResdntCnt':'의과레지던트 인원수', 'mdeptSdrCnt':'의과전문의 인원수', 'detyGdrCnt':'치과일반의 인원수',
+               'detyIntnCnt':'치과인턴 인원수', 'detyResdntCnt':'치과레지던트 인원수', 'detySdrCnt':'치과전문의 인원수', 'cmdcGdrCnt':'한방일반의 인원수',
+               'cmdcIntnCnt':'한방인턴 인원수', 'cmdcResdntCnt':'한방레지던트 인원수', 'cmdcSdrCnt':'한방전문의 인원수',
+               'pnursCnt':'조산사 인원수', 'XPos':'x좌표', 'YPos':'y좌표', 'distance':'거리'}
+all_df.rename()
+all_df = all_df.sort_values(by=['개설일자'], ascending=False, axis=0)
+all_df = all_df[['병원명', '종별코드명', '시도명', '시군구명',
+                 '읍면동명', '우편번호', '주소', '전화번호', '홈페이지', '개설일자', '의사총수', '의과일반의 인원수', '의과인턴 인원수',
+                 '의과레지던트 인원수', '의과전문의 인원수']]
 
 
 def file_download(df, file_tag, key=None):
@@ -49,37 +56,37 @@ st.title('병원 정보 검색 서비스🏥')
 
 
 t_input = st.text_input(label="병원명 검색", key="a")  # session state key = 'a'
-search_df = all_df.query('yadmNm.str.contains("{}")'.format(t_input))  ## df.query(조건식 문자열)
+search_df = all_df.query('병원명.str.contains("{}")'.format(t_input))  ## df.query(조건식 문자열)
 
 # 여러개 선택할 수 있을 때는 multiselect를 이용하실 수 있습니다. (return : list)
-clcd_list = all_df['clCdNm'].unique().tolist()
+clcd_list = all_df['종별코드명'].unique().tolist()
 select_multi_clcd = st.sidebar.multiselect('확인하고자 하는 clcd를 선택해 주세요. 복수선택가능', clcd_list)
 
 # 사이드바에 select box를 활용하여 조건을 선택한 다음 그에 해당하는 행만 추출하여 데이터프레임을 만들고자합니다.
 st.sidebar.title('지역 선택📍')
-sido_list = all_df['sidoCdNm'].unique().tolist()
+sido_list = all_df['시도명'].unique().tolist()
 select_multi_sido = st.sidebar.multiselect('확인하고자 하는 시도를 선택해 주세요. 복수선택가능', sido_list)
-sido_df = all_df[all_df['sidoCdNm'].isin(select_multi_sido)]  # 선택된 시도
+sido_df = all_df[all_df['시도명'].isin(select_multi_sido)]  # 선택된 시도
 
 # all_df, search_df, sido_df
 if select_multi_clcd:
-    all_df = all_df[all_df['clCdNm'].isin(select_multi_clcd)]
-    search_df = search_df[search_df['clCdNm'].isin(select_multi_clcd)]
-    sido_df = sido_df[sido_df['clCdNm'].isin(select_multi_clcd)]
+    all_df = all_df[all_df['종별코드명'].isin(select_multi_clcd)]
+    search_df = search_df[search_df['종별코드명'].isin(select_multi_clcd)]
+    sido_df = sido_df[sido_df['종별코드명'].isin(select_multi_clcd)]
 
 if select_multi_sido:  # 시도 선택된 "상태"
-    sggu_list = sido_df['sgguCdNm'].unique().tolist()  # 선택된 시도의 시군구 리스트
+    sggu_list = sido_df['시군구명'].unique().tolist()  # 선택된 시도의 시군구 리스트
     select_multi_sggu = st.sidebar.multiselect('확인하고자 하는 시군구를 선택해 주세요. 복수선택가능', sggu_list)
-    sggu_df = sido_df[sido_df['sgguCdNm'].isin(select_multi_sggu)]  # 선택된 시군구 df
+    sggu_df = sido_df[sido_df['시군구명'].isin(select_multi_sggu)]  # 선택된 시군구 df
     if select_multi_clcd:
-        sggu_df = sggu_df[sggu_df['clCdNm'].isin(select_multi_clcd)]
+        sggu_df = sggu_df[sggu_df['종별코드명'].isin(select_multi_clcd)]
 
     if select_multi_sggu:  # 시군구 선택된 "상태"
-        emdong_list = sggu_df['emdongNm'].unique().tolist()  # 선택된 시군구의 읍면동 리스트
+        emdong_list = sggu_df['읍면동명'].unique().tolist()  # 선택된 시군구의 읍면동 리스트
         select_multi_emdong = st.sidebar.multiselect('확인하고자 하는 읍면동을 선택해 주세요. 복수선택가능', emdong_list)
-        emdong_df = sggu_df[sggu_df['emdongNm'].isin(select_multi_emdong)]  # 선택된 읍면동 df
+        emdong_df = sggu_df[sggu_df['읍면동명'].isin(select_multi_emdong)]  # 선택된 읍면동 df
         if select_multi_clcd:
-            emdong_df = emdong_df[emdong_df['clCdNm'].isin(select_multi_clcd)]
+            emdong_df = emdong_df[emdong_df['종별코드명'].isin(select_multi_clcd)]
 
         if select_multi_emdong:  # 읍면동 선택된 "상태"
             if st.session_state["a"] == "":
@@ -87,7 +94,7 @@ if select_multi_sido:  # 시도 선택된 "상태"
                 st.dataframe(emdong_df.head(10))  # 선택된 읍면동 df 출력
                 file_download(df=emdong_df, file_tag=None)
             else:
-                emdong_df2 = emdong_df.query('yadmNm.str.contains("{}")'.format(t_input))
+                emdong_df2 = emdong_df.query('병원명.str.contains("{}")'.format(t_input))
                 st.write('사이드바 조건 중 "{}"(으)로 검색된 데이터: 총 {}건 (최대 10건만 출력됨)'.format(t_input, len(emdong_df2)))
                 st.dataframe(emdong_df2.head(10))  # 선택된 읍면동+병원명조건 df 출력
                 file_download(df=emdong_df2, file_tag=t_input)
@@ -97,7 +104,7 @@ if select_multi_sido:  # 시도 선택된 "상태"
                 st.dataframe(sggu_df.head(10))  # 선택된 시군구 df 출력
                 file_download(df=sggu_df, file_tag=None)
             else:
-                sggu_df2 = sggu_df.query('yadmNm.str.contains("{}")'.format(t_input))
+                sggu_df2 = sggu_df.query('병원명.str.contains("{}")'.format(t_input))
                 st.write('사이드바 조건 중 "{}"(으)로 검색된 데이터: 총 {}건 (최대 10건만 출력됨)'.format(t_input, len(sggu_df2)))
                 st.dataframe(sggu_df2.head(10))  # 선택된 시군구+병원명조건 df 출력
                 file_download(df=sggu_df2, file_tag=t_input)
@@ -107,7 +114,7 @@ if select_multi_sido:  # 시도 선택된 "상태"
             st.dataframe(sido_df.head(10))  # 선택된 시도 df 출력
             file_download(df=sido_df, file_tag=None)
         else:
-            sido_df2 = sido_df.query('yadmNm.str.contains("{}")'.format(t_input))
+            sido_df2 = sido_df.query('병원명.str.contains("{}")'.format(t_input))
             st.write('사이드바 조건 중 "{}"(으)로 검색된 데이터: 총 {}건 (최대 10건만 출력됨)'.format(t_input, len(sido_df2)))
             st.dataframe(sido_df2.head(10))  # 선택된 시도+병원명조건 df 출력
             file_download(df=sido_df2, file_tag=t_input)
