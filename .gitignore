@@ -11,3 +11,7 @@ out
 gen
 build
 rebel.xml
+
+# toml
+.streamlit
+*.toml
