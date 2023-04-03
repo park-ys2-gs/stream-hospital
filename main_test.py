@@ -28,6 +28,11 @@ table_colum_names = ['seq', 'ykiho', 'yadmNm', 'clCd', 'clCdNm', 'sidoCd', 'sido
 'mdeptResdntCnt', 'mdeptSdrCnt', 'detyGdrCnt', 'detyIntnCnt', 'detyResdntCnt', 'detySdrCnt', 'cmdcGdrCnt',
 'cmdcIntnCnt', 'cmdcResdntCnt', 'cmdcSdrCnt', 'pnursCnt', 'XPos', 'YPos', 'distance']
 all_df = pd.DataFrame(rows, columns=table_colum_names)
+all_df = all_df.sort_values(by=['estbDd'], ascending=False, axis=0)
+all_df = all_df[['yadmNm', 'clCdNm', 'sidoCdNm', 'sgguCdNm',
+'emdongNm', 'postNo', 'addr', 'telno', 'hospUrl', 'estbDd', 'drTotCnt', 'mdeptGdrCnt', 'mdeptIntnCnt',
+'mdeptResdntCnt', 'mdeptSdrCnt', 'detyGdrCnt', 'detyIntnCnt', 'detyResdntCnt', 'detySdrCnt', 'cmdcGdrCnt',
+'cmdcIntnCnt', 'cmdcResdntCnt', 'cmdcSdrCnt', 'pnursCnt']]
 
 
 def file_download(df, file_tag, key=None):
@@ -42,7 +47,7 @@ def file_download(df, file_tag, key=None):
 
 st.title('병원 정보 검색 서비스🏥')
 
-all_df = all_df.sort_values(by=['estbDd'], ascending=False, axis=0)
+
 t_input = st.text_input(label="병원명 검색", key="a")  # session state key = 'a'
 search_df = all_df.query('yadmNm.str.contains("{}")'.format(t_input))  ## df.query(조건식 문자열)
 
