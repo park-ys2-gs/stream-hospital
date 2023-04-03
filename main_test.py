@@ -35,7 +35,7 @@ rename_dict = {'ykiho':'암호화된 요양기호', 'yadmNm':'병원명', 'clCd'
                'detyIntnCnt':'치과인턴 인원수', 'detyResdntCnt':'치과레지던트 인원수', 'detySdrCnt':'치과전문의 인원수', 'cmdcGdrCnt':'한방일반의 인원수',
                'cmdcIntnCnt':'한방인턴 인원수', 'cmdcResdntCnt':'한방레지던트 인원수', 'cmdcSdrCnt':'한방전문의 인원수',
                'pnursCnt':'조산사 인원수', 'XPos':'x좌표', 'YPos':'y좌표', 'distance':'거리'}
-all_df.rename()
+all_df.rename(columns=rename_dict, inplace=True)
 all_df = all_df.sort_values(by=['개설일자'], ascending=False, axis=0)
 all_df = all_df[['병원명', '종별코드명', '시도명', '시군구명',
                  '읍면동명', '우편번호', '주소', '전화번호', '홈페이지', '개설일자', '의사총수', '의과일반의 인원수', '의과인턴 인원수',
