@@ -22,11 +22,15 @@ def run_query(query):
         return cur.fetchall()
 
 
-rows = run_query("SELECT * FROM hospital_info;")
+# rows = run_query("SELECT * FROM hospital_info;")
+rows = run_query("SELECT A.*, B.shwSbjtCdNm, B.crtrYm, B.mfrnIntrsIlnsCdNm1, B.mfrnIntrsIlnsCdNm2, B.mfrnIntrsIlnsCdNm3, "
+                 "B.mfrnIntrsIlnsCdNm4, B.mfrnIntrsIlnsCdNm5 FROM HOSPITAL_INFO AS A LEFT JOIN HOSP_DIAG AS B ON A.YKIHO = B.YKIHO;")
 table_colum_names = ['seq', 'ykiho', 'yadmNm', 'clCd', 'clCdNm', 'sidoCd', 'sidoCdNm', 'sgguCd', 'sgguCdNm',
-'emdongNm', 'postNo', 'addr', 'telno', 'hospUrl', 'estbDd', 'drTotCnt', 'mdeptGdrCnt', 'mdeptIntnCnt',
-'mdeptResdntCnt', 'mdeptSdrCnt', 'detyGdrCnt', 'detyIntnCnt', 'detyResdntCnt', 'detySdrCnt', 'cmdcGdrCnt',
-'cmdcIntnCnt', 'cmdcResdntCnt', 'cmdcSdrCnt', 'pnursCnt', 'XPos', 'YPos', 'distance']
+                     'emdongNm', 'postNo', 'addr', 'telno', 'hospUrl', 'estbDd', 'drTotCnt', 'mdeptGdrCnt', 'mdeptIntnCnt',
+                     'mdeptResdntCnt', 'mdeptSdrCnt', 'detyGdrCnt', 'detyIntnCnt', 'detyResdntCnt', 'detySdrCnt', 'cmdcGdrCnt',
+                     'cmdcIntnCnt', 'cmdcResdntCnt', 'cmdcSdrCnt', 'pnursCnt', 'XPos', 'YPos', 'distance',
+                     'shwSbjtCdNm', 'crtrYm', 'mfrnIntrsIlnsCdNm1', 'mfrnIntrsIlnsCdNm2', 'mfrnIntrsIlnsCdNm3',
+                     'mfrnIntrsIlnsCdNm4', 'mfrnIntrsIlnsCdNm5']
 all_df = pd.DataFrame(rows, columns=table_colum_names)
 rename_dict = {'ykiho':'암호화된 요양기호', 'yadmNm':'병원명', 'clCd':'종별코드', 'clCdNm':'종별코드명', 'sidoCd':'시도코드',
                'sidoCdNm':'시도명', 'sgguCd':'시군구코드', 'sgguCdNm':'시군구명', 'emdongNm':'읍면동명', 'postNo':'우편번호',
@@ -34,13 +38,16 @@ rename_dict = {'ykiho':'암호화된 요양기호', 'yadmNm':'병원명', 'clCd'
                'mdeptIntnCnt':'의과인턴 인원수', 'mdeptResdntCnt':'의과레지던트 인원수', 'mdeptSdrCnt':'의과전문의 인원수', 'detyGdrCnt':'치과일반의 인원수',
                'detyIntnCnt':'치과인턴 인원수', 'detyResdntCnt':'치과레지던트 인원수', 'detySdrCnt':'치과전문의 인원수', 'cmdcGdrCnt':'한방일반의 인원수',
                'cmdcIntnCnt':'한방인턴 인원수', 'cmdcResdntCnt':'한방레지던트 인원수', 'cmdcSdrCnt':'한방전문의 인원수',
-               'pnursCnt':'조산사 인원수', 'XPos':'x좌표', 'YPos':'y좌표', 'distance':'거리'}
+               'pnursCnt':'조산사 인원수', 'XPos':'x좌표', 'YPos':'y좌표', 'distance':'거리',
+               'shwSbjtCdNm':'표시과목명', 'crtrYm':'기준년월', 'mfrnIntrsIlnsCdNm1':'진료량1위',
+               'mfrnIntrsIlnsCdNm2':'진료량2위', 'mfrnIntrsIlnsCdNm3':'진료량3위', 'mfrnIntrsIlnsCdNm4':'진료량4위',
+               'mfrnIntrsIlnsCdNm5':'진료량5위'}
 all_df.rename(columns=rename_dict, inplace=True)
 all_df = all_df.sort_values(by=['개설일자'], ascending=False, axis=0)
 all_df = all_df[['병원명', '종별코드명', '시도명', '시군구명',
                  '읍면동명', '우편번호', '주소', '전화번호', '홈페이지', '개설일자', '의사총수', '의과일반의 인원수', '의과인턴 인원수',
-                 '의과레지던트 인원수', '의과전문의 인원수']]
-
+                 '의과레지던트 인원수', '의과전문의 인원수',
+                 '표시과목명', '기준년월', '진료량1위', '진료량2위', '진료량3위', '진료량4위', '진료량5위']]
 
 def file_download(df, file_tag, key=None):
     convert_csv = df.to_csv().encode('cp949')
