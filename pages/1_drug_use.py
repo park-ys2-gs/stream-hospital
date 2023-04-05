@@ -29,13 +29,17 @@ select_multi_sido = st.sidebar.multiselect('확인하고자 하는 sido_cd_nm을
 sggu_list = all_df['sgguCdNm'].unique().tolist()
 select_multi_sggu = st.sidebar.multiselect('확인하고자 하는 sggu_cd_nm을 선택해 주세요. 복수선택가능', sggu_list)
 
-genre = st.sidebar.radio(
+cl_list = all_df['clCdNm'].unique().tolist()
+select_multi_cl = st.sidebar.multiselect('확인하고자 하는 cl_cd_nm을 선택해 주세요. 복수선택가능', cl_list)
+
+genre = st.radio(
     "확인하고자 하는 값을 선택해주세요.",
     ('msupUseAmt', 'totUseQty'))
 
 df = all_df[all_df['gnlNmCd'].isin(select_multi_gnl)]
 df = df[df['sidoCdNm'].isin(select_multi_sido)]
 df = df[df['sgguCdNm'].isin(select_multi_sggu)]
+df = df[df['clCdNm'].isin(select_multi_cl)]
 
 # Create distplot with custom bin_size
 fig = px.line(df, x='diagYm', y=genre, color='insupTpCd', markers=True)
@@ -51,3 +55,7 @@ fig.update_layout(
 )
 # Plot!
 st.plotly_chart(fig, use_container_width=True)
+st.write("<<<개선사항>>>")
+st.write("1. File DownLoad 기능 추가.")
+st.write("2. 세부 선택이 없었을 경우 sum 그래프 보여주는 기능 추가."
+         "ex) gnl_nm_cd를 선택하고 sido_cd_nm선택전일때 sido구분 없이 해당 gnl_nm_cd의 합을 보여줌.")
