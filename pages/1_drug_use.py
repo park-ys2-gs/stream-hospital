@@ -55,8 +55,16 @@ fig.update_layout(
 )
 # Plot!
 st.plotly_chart(fig, use_container_width=True)
+if select_multi_cl == ['상급종합병원']:
+    st.write("📋 '서울시' '광진구' '상급종합병원' 리스트: ['건국대학교병원']")
+    convert_csv = df.to_csv().encode('cp949')
+    st.download_button(
+        label="📥 파일 다운로드",
+        data=convert_csv,
+        file_name='drug_amt_use.csv',
+        mime='text/csv',
+        key=None)
 st.markdown("<<<개선사항>>>  \n"
-            "1. File DownLoad 기능 추가.  \n"
-            "2. 세부 선택이 없었을 경우 sum 그래프 보여주는 기능 추가.  \n"
+            "1. 세부 선택이 없었을 경우 sum 그래프 보여주는 기능 추가.  \n"
             "ex) gnl_nm_cd를 선택하고 sido_cd_nm선택전일때 sido구분 없이 해당 gnl_nm_cd의 합을 보여줌.  \n"
-            "3. 기간 선택 기능")
+            "2. 기간 선택 기능")
