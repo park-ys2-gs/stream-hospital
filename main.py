@@ -1,15 +1,23 @@
-import pandas as pd
+# https://github.com/streamlit/streamlit/issues/4195#issuecomment-998909519
+# Simpler, effective method to clear value of text_input #4195
 import streamlit as st
+import pickle
+import numpy as np
+import sklearn
 
-st.title('기넥신 성장 금액 계산기📈')
-num1 = st.number_input("1주일 진료일수", value=4)
-num2 = st.number_input("하루 기넥신 처방 환자", value=0)
-num3 = st.radio("처방 용량(mg)", options=[40, 80, 240])
-num4 = st.number_input("의료인 평균 처방 일수", value=60)
 
-num3_dic = {40: 127, 80: 185, 240: 550}
-result = num1*num2*num3_dic[num3]*num4*4
+st.set_page_config(layout="wide", initial_sidebar_state="auto", page_title="CHDM LNG", page_icon="🧮")
+st.title('CHDM LNG 사용량 계산기📈')
+st.sidebar.title("예측값 입력✅")
+num1 = st.sidebar.number_input("var1", value=4)
+num2 = st.sidebar.number_input("var2", value=0)
+num3 = st.sidebar.number_input("var3", value=4)
+num4 = st.sidebar.slider('var4', 10, 100, 50)
 
-# 입력받은 숫자들을 출력한다.
-st.write(f"1주일에 진료일수가 ({num1})일인 의료인께 하루에 환자 ({num2})명에게 기넥신 ({num3})mg을 처방해주신다면")
-st.write(f"월 기넥신 월 성장 금액은 ({result:,})원.")
+predict_button = st.sidebar.button("예측하기(버튼뺄수있음)", type="primary")
+if predict_button:
+    with open('saved_model', 'rb') as f:
+        mod = pickle.load(f)
+    predict = mod.predict(np.array([[num1, num2, num3, num4]]))
+    st.write(f"Prediction of LNG usages:{1}")
+
