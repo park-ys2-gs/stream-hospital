@@ -16,6 +16,8 @@ num4 = st.sidebar.slider('var4', 10, 100, 50)
 
 predict_button = st.sidebar.button("예측하기(버튼뺄수있음)", type="primary")
 if predict_button:
+    # with open('saved_model', 'wb') as f:
+    #     pickle.dump(reg, f)
     with open('saved_model', 'rb') as f:
         mod = pickle.load(f)
     predict = mod.predict(np.array([[num1, num2, num3, num4]]))
